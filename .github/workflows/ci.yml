@@ -48,9 +48,9 @@ jobs:
           username: ${{ secrets.USERNAME }}
           password: ${{ secrets.PASSWORD }}
 
-      - name: build and push docker image
+      - name: Push docker image if integration test passes
         if: ${{ success() }}
-        run: docker compose build && docker compose push
+        run: docker compose push
       
       - name: Stop Docker Compose services
         run: docker-compose down
