@@ -1,6 +1,7 @@
 name: gitops-CI
 
 on: 
+  push:
   # manual trigger
   workflow_dispatch:
 
