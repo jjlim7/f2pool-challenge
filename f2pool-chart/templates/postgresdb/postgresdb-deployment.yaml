@@ -1,0 +1,83 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose convert -f docker-compose.yaml
+    kompose.version: 1.32.0 (HEAD)
+  labels:
+    io.kompose.service: postgresdb
+  name: postgresdb
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: postgresdb
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: kompose convert -f docker-compose.yaml
+        kompose.version: 1.32.0 (HEAD)
+      labels:
+        io.kompose.network/f2pool-challenge-default: "true"
+        io.kompose.service: postgresdb
+    spec:
+      containers:
+        - env:
+            - name: PORT
+              valueFrom:
+                configMapKeyRef:
+                  key: PORT
+                  name: env
+            - name: POSTGRES_DB
+              valueFrom:
+                configMapKeyRef:
+                  key: POSTGRES_DB
+                  name: env
+            - name: POSTGRES_HOST
+              valueFrom:
+                configMapKeyRef:
+                  key: POSTGRES_HOST
+                  name: env
+            - name: POSTGRES_PORT
+              valueFrom:
+                configMapKeyRef:
+                  key: POSTGRES_PORT
+                  name: env
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  key: POSTGRES_PASSWORD
+                  name: myapp-secrets
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  key: POSTGRES_USER
+                  name: myapp-secrets
+          livenessProbe:
+            exec:
+              command:
+                - pg_isready
+                - -d
+                - $(POSTGRES_DB)
+                - -U
+                - $(POSTGRES_USER)
+            failureThreshold: 5
+            periodSeconds: 10
+            timeoutSeconds: 5
+          name: postgresdb
+          image: postgres:latest
+          ports:
+            - containerPort: 5432
+          volumeMounts:
+            - mountPath: /var/lib/postgresql/data
+              name: dbdata
+      restartPolicy: Always
+      volumes:
+        - name: dbdata
+          persistentVolumeClaim:
+            claimName: dbdata
+        - name: secret-volume
+          secret:
+            secretName: myapp-secrets

@@ -1,0 +1,33 @@
+version: '3.8'
+
+services:
+  # Golang backend service
+  backend:
+    build: 
+      context: backend
+      dockerfile: Dockerfile
+    image: jjlim159/f2pool_backend
+    env_file: ".env"
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./logs:/app/logs
+    depends_on:
+      - postgresdb  # Ensure that the backend service depends on the database service
+
+  # PostgreSQL database service
+  postgresdb:
+    image: postgres:latest
+    ports:
+      - "5432:5432"
+    env_file: "./.env"
+    volumes:
+      - dbdata:/var/lib/postgresql/data  # Persist database data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -d $${POSTGRES_DB} -U $${POSTGRES_USER}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  dbdata:
