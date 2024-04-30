@@ -42,18 +42,15 @@ jobs:
     - name: Check out code
       uses: actions/checkout@v2
 
-    - name: Setup Kustomize
-      uses: imranismail/setup-kustomize@v1
+    - name: Push Helm chart to OCI compatible registry (Github)
+      uses: bsord/helm-push@4.2.0
       with:
-        kustomize-version: "3.6.1"
-
-    - name: Update Kubernetes resources
-      env:
-        DOCKER_USERNAME: ${{ secrets.USERNAME }}
-      run: |
-        cd infra
-        kustomize edit set image argo-app=$DOCKER_USERNAME/argo-app:$GITHUB_SHA
-        cat kustomization.yml
+        useOCIRegistry: true
+        registry-url:  oci://registry-1.docker.io/f2pool-backend-helm
+        username: bsord
+        access-token: ${{ secrets.REGISTRY_ACCESS_TOKEN }}
+        force: true
+        chart-folder: chart
         
     - name: Commit files
       run: |
