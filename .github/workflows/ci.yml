@@ -30,7 +30,7 @@ jobs:
           docker-compose ps
   
       - name: Run tests
-        run: docker-compose run backend go test -v -tags=unit,integration -coverprofile=coverage.out ./test/*
+        run: docker-compose run backend go test -v -tags=unit,integration -coverprofile=coverage.out ./tests/*
   
       - name: Stop Docker Compose services
         run: docker-compose down
