@@ -15,12 +15,12 @@ func ValidateHandler(w http.ResponseWriter, r *http.Request) {
 
 	resp := map[string]interface{}{
 		"ip":      ip,
-		"isValid": isValidIPv4(ip),
+		"isValid": IsValidIPv4(ip),
 	}
 	sendJSONResponse(w, http.StatusOK, resp)
 }
 
 // check if given string is a valid IPv4 address
-func isValidIPv4(ip string) bool {
+func IsValidIPv4(ip string) bool {
 	return net.ParseIP(ip) != nil && net.ParseIP(ip).To4() != nil
 }

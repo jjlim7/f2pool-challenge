@@ -17,7 +17,7 @@ func LookupHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Perform DNS lookup for IPv4 addresses
-	ips, err := lookupIPv4(domain)
+	ips, err := LookupIPv4(domain)
 	if err != nil {
 		http.Error(w, "Error performing DNS lookup", http.StatusInternalServerError)
 		return
@@ -38,7 +38,7 @@ func LookupHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 // lookupIPv4 performs a DNS lookup and returns IPv4 addresses for a given domain
-func lookupIPv4(domain string) ([]string, error) {
+func LookupIPv4(domain string) ([]string, error) {
 	addrs, err := net.LookupIP(domain)
 	if err != nil {
 		return nil, err
