@@ -25,10 +25,7 @@ jobs:
           ENV_POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
 
       - name: build and push docker image
-        uses: pennsignals/publish_docker-compose@v0.1.0
-        with: 
-          docker_compose: 'docker-compose.yaml' # required
-          repo_token: "${{ secrets.GITHUB_TOKEN }}"
+        run: docker compose build && docker compose push
 
   deploy:
     name: Deploy
