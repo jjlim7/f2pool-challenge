@@ -8,11 +8,21 @@ on:
 jobs:
   build:
     name: build
+    environment: dev
     runs-on: ubuntu-latest
 
     steps:
       - name: check out code
         uses: actions/checkout@v2
+
+      - name: Create .env file
+        uses: ozaytsev86/create-env-file@v1
+        with:
+          ENV_POSTGRES_HOST: postgresdb
+          ENV_POSTGRES_PORT: 5432
+          ENV_POSTGRES_DB: mydatabase
+          ENV_POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
+          ENV_POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
 
       - name: build and push docker image
         uses: pennsignals/publish_docker-compose@v0.1.0
