@@ -17,7 +17,7 @@ jobs:
       - name: build and push docker image
         uses: pennsignals/publish_docker-compose@v0.1.0
         with: 
-          docker_compose: 'docker-compose.yml' # required
+          docker_compose: 'docker-compose.yaml' # required
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
 
   deploy:
