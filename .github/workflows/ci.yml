@@ -47,10 +47,10 @@ jobs:
       with:
         useOCIRegistry: true
         registry-url:  oci://registry-1.docker.io/f2pool-backend-helm
-        username: bsord
-        access-token: ${{ secrets.REGISTRY_ACCESS_TOKEN }}
+        username: ${{ secrets.USERNAME }}
+        password: ${{ secrets.PASSWORD }}
         force: true
-        chart-folder: chart
+        chart-folder: f2pool-chart
         
     - name: Commit files
       run: |
