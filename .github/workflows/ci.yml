@@ -2,6 +2,8 @@ name: gitops-CI
 
 on: 
   push:
+    branches:
+      - main
   pull_request:
   # manual trigger
   workflow_dispatch:
