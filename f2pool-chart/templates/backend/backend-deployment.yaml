@@ -50,6 +50,8 @@ spec:
                 secretKeyRef:
                   key: POSTGRES_USER
                   name: myapp-secrets
+            - name: APP_VERSION
+              value: "{{ .Values.app.version }}"
           image: jjlim159/f2pool_backend
           name: backend
           ports:
