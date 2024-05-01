@@ -12,6 +12,12 @@ import (
 
 var logPath = "/app/logs/access.log"
 
+type contextKey string
+
+const (
+	contextKeyRequestID contextKey = "requestID"
+)
+
 // LoggingMiddleware logs incoming HTTP requests
 func LoggingMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -32,7 +38,7 @@ func LoggingMiddleware(next http.Handler) http.Handler {
 
 		// Set requestID in request context for traceability
 		ctx := r.Context()
-		ctx = context.WithValue(ctx, "requestID", requestID)
+		ctx = context.WithValue(ctx, contextKeyRequestID, requestID)
 		r = r.WithContext(ctx)
 
 		// Call the next handler
