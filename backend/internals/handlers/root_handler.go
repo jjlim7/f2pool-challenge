@@ -16,7 +16,7 @@ var conn, _ = db.ConnectDatabase()
 // RootHandler handles requests to the root endpoint "/"
 func RootHandler(w http.ResponseWriter, r *http.Request) {
 	info := models.AppInfo{
-		Version:    "0.1.0",
+		Version:    os.Getenv("APP_VERSION"),
 		Date:       time.Now().Unix(),
 		Kubernetes: isRunningInKubernetes(),
 	}

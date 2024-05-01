@@ -14,10 +14,6 @@ type AppInfo struct {
 	Kubernetes bool   `json:"kubernetes"`
 }
 
-type Address struct {
-	IP string
-}
-
 type Query struct {
 	gorm.Model
 	ID        int32          `gorm:"primaryKey;autoIncrement:true"`

@@ -60,7 +60,6 @@ func logQuery(domain string, ips []string, clientip string) (models.Query, error
 		Domain:    domain,
 	}
 
-	log.Printf("%v", query)
 	// Insert query and result into the database
 	err := conn.Create(&query).Error
 	if err != nil {
