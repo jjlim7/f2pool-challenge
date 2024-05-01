@@ -3,6 +3,24 @@
 ## Overview
 This project implements a REST API based on the provided OpenAPI/Swagger definition. The API is built using Golang and provides several endpoints as specified in the challenge requirements.
 
+## Setup
+- Based on `.env.template`, create a `.env` file and enter the POSTGRES_USER, POSTGRES_PASSWORD environment variables for use in the Docker development environment.
+- Note: Secrets in "production" are handled using Kubernetes Opaque secret
+
+```sh
+# Build and up docker
+docker-compose up --build -d
+
+# Helm package
+docker compose build && docker compose push
+helm install f2pool f2pool-chart
+
+# Check if service is running
+kubectl get po
+kubectl get svc
+minikube tunnel
+```
+
 ## Features
 
 ### Endpoints
@@ -50,17 +68,3 @@ This project implements a REST API based on the provided OpenAPI/Swagger definit
 - Secrets management for sensitive data using Opaque secret (created using base64 encoding)
 - Supports deployment to a Kubernetes cluster for production-ready setups.
 
-## Setup
-```sh
-# Build and up docker
-docker-compose up --build -d
-
-# Helm package
-docker compose build && docker compose push
-helm install f2pool f2pool-chart
-
-# Check if service is running
-kubectl get po
-kubectl get svc
-minikube tunnel
-```
