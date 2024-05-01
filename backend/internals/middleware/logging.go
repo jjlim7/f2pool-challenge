@@ -10,6 +10,8 @@ import (
 	"github.com/google/uuid"
 )
 
+var logPath = "/app/logs/access.log"
+
 // LoggingMiddleware logs incoming HTTP requests
 func LoggingMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -19,7 +21,7 @@ func LoggingMiddleware(next http.Handler) http.Handler {
 		requestID := uuid.New().String()
 
 		// Log to file
-		logFile, err := os.OpenFile("/app/logs/access.log", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+		logFile, err := os.OpenFile(logPath, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
 		if err != nil {
 			log.Printf("Error opening log file: %v", err)
 		} else {
