@@ -53,17 +53,6 @@ jobs:
         id: test
         run: docker-compose run backend go test -v ./tests/...
       
-      - name: Check test results
-        run: |
-          test_result=$(echo "${{ steps.test.outputs.run }}" | tail -n 1)
-          if [[ $test_result == *"[no test files]"* ]]; then
-            echo "No tests to run. Skipping image push."
-            exit 0
-          elif [[ $test_result != *"PASS"* ]]; then
-            echo "Tests failed. Exiting workflow."
-            exit 1  # Exit with non-zero status to indicate failure
-          fi
-      
       - name: Stop Docker Compose services
         run: docker-compose down
 

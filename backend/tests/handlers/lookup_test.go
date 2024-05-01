@@ -13,6 +13,7 @@ func TestLookupIPv4(t *testing.T) {
 	ipv4Addresses, err := handlers.LookupIPv4(domain)
 
 	// Check if there's an error
+	t.Errorf("test error: %v", err)
 	if err != nil {
 		t.Errorf("lookupIPv4 error: %v", err)
 	}
