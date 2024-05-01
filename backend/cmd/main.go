@@ -20,8 +20,8 @@ func main() {
 	router.HandleFunc("/", handlers.RootHandler).Methods("GET")
 	router.HandleFunc("/health", handlers.HealthHandler).Methods("GET")
 	router.HandleFunc("/v1/tools/lookup", handlers.LookupHandler).Methods("GET")
-	router.HandleFunc("/v1/tools/validate", handlers.ValidateHandler).Methods("GET")
 	router.HandleFunc("/v1/tools/history", handlers.HistoryHandler).Methods("GET")
+	router.HandleFunc("/v1/tools/validate", handlers.ValidateHandler).Methods("POST")
 
 	// Prometheus metrics endpoint
 	router.Handle("/metrics", promhttp.Handler())
