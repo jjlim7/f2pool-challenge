@@ -1,61 +1,66 @@
-# Interview challenge
+# Interview Challenge Implementation
 
-## Coding Challenge
+## Overview
+This project implements a REST API based on the provided OpenAPI/Swagger definition. The API is built using Golang and provides several endpoints as specified in the challenge requirements.
 
-Please create a REST API based on the attached OpenAPI/Swagger definition in your preferred language (Node.JS, TypeScript, Go, Python, Ruby, Perl, Crystal, Nim, etc.). In addition to the endpoints included in the Swagger definition, please ensure that a Prometheus metrics endpoint is available in your application under `/metrics`. The application should also provide a `/health` endpoint.
+## Features
 
-The `/` (root) endpoint should provide the current date (UNIX epoch) and version. Additionally, a boolean property called Kubernetes should indicate if the application is running under Kubernetes. Below is an example of the expected output.
+### Endpoints
+1. **Root Endpoint (`/`):**
+   - Provides the current date in UNIX epoch format.
+   - Returns the service version.
+   - Includes a boolean property `Kubernetes` indicating if the application is running under Kubernetes.
 
-```json
-{
-   "version": "0.1.0",
-   "date": 1663534325,
-   "kubernetes": false
-}
+2. **Health Endpoint (`/health`):**
+   - Provides information about the health of the service.
+
+3. **Metrics Endpoint (`/metrics`):**
+   - Exposes Prometheus metrics for monitoring and instrumentation.
+
+4. **Lookup Endpoint (`/v1/tools/lookup`):**
+   - Resolves IPv4 addresses for a given domain.
+   - Logs successful queries and their results in a PostgreSQL database.
+
+5. **Validate Endpoint (`/v1/tools/validate`):**
+   - Validates if the input is an IPv4 address.
+
+6. **History Endpoint (`/v1/history`):**
+   - Retrieves the latest 20 saved queries from the database, ordered by the most recent first.
+
+### Dockerized Development Environment
+- Fully Dockerized development environment using Docker and Docker Compose.
+- Services and tools are included in the Docker Compose definition.
+- Supports easy setup and initialization with `docker-compose up -d --build`.
+
+### DevOps Tasks
+- [x] **Kubernetes Support:** Includes Kubernetes manifests or a Helm Chart for deploying the application in Kubernetes.
+- [x] **Secrets Management:** Sensitive data such as database passwords stored in Kubernetes secrets.
+- [x] **CI Pipeline:** Utilizes GitHub Actions for continuous integration tasks:
+  - Basic tests and linting.
+  - Build and package the application into a versioned Docker image.
+  - Generate Helm chart as an artifact for deployment.
+
+### CI/CD Pipeline
+- GitHub Actions CI pipeline is configured in .github/workflows/ci.yml.
+- Automatically triggered upon each commit or pull request
+- Executes tests, linting, builds Docker images, and generates Helm chart artifacts.
+
+### Kubernetes Deployment
+- Helm Chart provided in the `f2pool-chart/` directory.
+- Secrets management for sensitive data using Opaque secret (created using base64 encoding)
+- Supports deployment to a Kubernetes cluster for production-ready setups.
+
+## Setup
+```sh
+# Build and up docker
+docker-compose up --build -d
+
+# Helm package
+docker compose build && docker compose push
+helm install f2pool f2pool-chart
+
+# Check if service is running
+kubectl get po
+kubectl get svc
+minikube tunnel
 ```
-
-The `/v1/tools/lookup` endpoint should resolve ONLY the IPv4 addresses for the given domain. Make sure you log all successful queries and their result in a database of your choosing (PostgreSQL, MySQL/MariaDB, MongoDB, Redis, ElasticSearch, SurrealDB, etc.). No SQLite or file-based databases, as we're planning on deploying this service to Kubernetes.
-
-For the `/v1/tools/validate` endpoint, the service should validate if the input is an IPv4 address or not.
-
-The `/v1/history` endpoint should retrieve the latest 20 saved queries from the database and display them in order (the most recent should be first).
-
-Please ensure the service starts on port 3000 and your REST API has an access log. Uh-oh, don't forget about graceful shutdowns.
-
-If possible, please make sure the OpenAPI/Swagger is available so we can generate a client for your service (not mandatory).
-
-## Development environment
-
-Create a fully Dockerized development environment using Docker and Docker Compose. Also, ensure all services and tools are included in the Docker Compose definition and that everything starts in the correct order and initializes correctly (migrations, etc.). We should be able to run everything with a simple:
-
-```
-docker-compose up -d --build
-```
-
-The Dockerfile and Docker Compose files should be available in the root directory of your project.
-
-## Tasks for DevOps roles only
-**For candidates applying for our Back-end/full-stack roles, this part is optional.**
-
-### Kubernetes support
-
-We plan on running your application in Kubernetes, so please provide either Kubernetes manifests or a Helm Chart. We prefer Helm Charts. Also, please store sensitive data in Kubernetes secrets (database passwords, etc.)
-
-### CI Pipeline
-
-Add a CI pipeline (GitHub Actions, GitLab CI, etc.) to test (basic tests, linting, etc.), build (Docker only), and package (Helm chart) your application upon each commit. The artifact of your build should be at least a versioned Docker image.
-
-## References
-- https://12factor.net/
-- https://swagger.io/
-- https://docs.docker.com/compose/
-- https://minikube.sigs.k8s.io/docs/
-- https://helm.sh/
-
----
-
-**Notes:**
-
-- We appreciate simple, clean, idiomatic code and essential documentation.
-- Any improvements on the Swagger/OpenAPI definitions are welcome.
-- Pay attention to details.
