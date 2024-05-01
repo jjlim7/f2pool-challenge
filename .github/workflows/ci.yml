@@ -28,7 +28,6 @@ jobs:
   
   build-and-test:
     name: build-and-test
-    needs: lint
     environment: dev
     runs-on: ubuntu-latest
 
