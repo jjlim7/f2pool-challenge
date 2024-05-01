@@ -25,8 +25,9 @@ jobs:
           # When `install-mode` is `goinstall` the value can be v1.2.3, `latest`, or the hash of a commit.
           version: v1.57
           working-directory: ./backend
-  build:
-    name: build
+  
+  build-and-test:
+    name: build-and-test
     needs: lint
     environment: dev
     runs-on: ubuntu-latest
@@ -59,26 +60,49 @@ jobs:
           if [[ $test_result == *"[no test files]"* ]]; then
             echo "No tests to run. Skipping image push."
             exit 0
+          elif [[ $test_result != *"PASS"* ]]; then
+            echo "Tests failed. Exiting workflow."
+            exit 1  # Exit with non-zero status to indicate failure
           fi
+      
+      - name: Stop Docker Compose services
+        run: docker-compose down
 
+  deploy-docker:
+    name: Deploy Docker
+    needs: build-and-test
+    environment: dev
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: check out code
+        uses: actions/checkout@v2
+
+      - name: Create .env file
+        uses: ozaytsev86/create-env-file@v1
+        with:
+          ENV_POSTGRES_HOST: postgresdb
+          ENV_POSTGRES_PORT: 5432
+          ENV_POSTGRES_DB: mydatabase
+          ENV_POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
+          ENV_POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+          
       - name: Login to Docker Hub
-        if: ${{ success() }}
         uses: docker/login-action@v2
         with:
           username: ${{ secrets.USERNAME }}
           password: ${{ secrets.PASSWORD }}
 
       - name: Push docker image if integration test passes
-        if: ${{ success() }}
-        run: docker compose push
+        run: docker compose build && docker compose push
       
       - name: Stop Docker Compose services
         run: docker-compose down
 
-  deploy:
+  deploy-helm:
     name: Deploy
     runs-on: ubuntu-latest
-    needs: build
+    needs: build-and-test
 
     steps:
       - name: Check out code
