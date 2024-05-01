@@ -33,12 +33,14 @@ func ConnectDatabase() (*gorm.DB, error) {
 	)
 	database, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
-		log.Fatalln("Failed to create Postgres connection")
+		log.Println("Failed to create Postgres connection")
 	}
 
 	// DB Migration
-	database.AutoMigrate(&models.AppInfo{})
-	database.AutoMigrate(&models.DNSLog{})
+	err = database.AutoMigrate(&models.AppInfo{}, &models.DNSLog{})
+	if err != nil {
+		log.Fatalln("Failed to auto-migrate models")
+	}
 
 	log.Printf("New PostgresDB Connection Created")
 	return database, err

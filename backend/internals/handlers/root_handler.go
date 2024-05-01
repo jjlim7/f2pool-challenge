@@ -2,7 +2,9 @@ package handlers
 
 import (
 	"encoding/json"
+	"log"
 	"net/http"
+	"os"
 	"time"
 
 	"backend/db"
@@ -21,15 +23,20 @@ func RootHandler(w http.ResponseWriter, r *http.Request) {
 	sendJSONResponse(w, http.StatusOK, info)
 }
 
-// sendJSONResponse sends a JSON response with the specified status code
+// send JSON response with the specified status code
 func sendJSONResponse(w http.ResponseWriter, statusCode int, data interface{}) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(statusCode)
-	json.NewEncoder(w).Encode(data)
+
+	encoder := json.NewEncoder(w)
+	err := encoder.Encode(data)
+	if err != nil {
+		log.Printf("[Error] %v", err)
+	}
 }
 
-// isRunningInKubernetes checks if the application is running in a Kubernetes environment
+// check if the application is running in a Kubernetes environment
 func isRunningInKubernetes() bool {
-	// Implement your logic here to detect Kubernetes environment
-	return false
+	_, err := os.Stat("/var/run/secrets/kubernetes.io/serviceaccount/token")
+	return err == nil
 }

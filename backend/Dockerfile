@@ -1,4 +1,4 @@
-FROM golang:latest as builder
+FROM golang:latest AS builder
 
 RUN apt-get update
 RUN apt install -y curl
