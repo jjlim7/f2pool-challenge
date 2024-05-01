@@ -24,17 +24,13 @@ func LookupHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Log the successful query to the database
-	err = logQuery(domain, ips)
+	query, err := logQuery(domain, ips, r.RemoteAddr)
 	if err != nil {
 		http.Error(w, "Error logging query to database", http.StatusInternalServerError)
 		return
 	}
 
-	response := map[string]interface{}{
-		"domain":  domain,
-		"ipv4ips": ips,
-	}
-	sendJSONResponse(w, http.StatusOK, response)
+	sendJSONResponse(w, http.StatusOK, query)
 }
 
 // lookupIPv4 performs a DNS lookup and returns IPv4 addresses for a given domain
@@ -44,30 +40,33 @@ func LookupIPv4(domain string) ([]string, error) {
 		return nil, err
 	}
 
-	var ipv4ips []string
+	var addresses []string
 	for _, addr := range addrs {
 		if ip4 := addr.To4(); ip4 != nil {
-			ipv4ips = append(ipv4ips, ip4.String())
+			addresses = append(addresses, ip4.String())
 		}
 	}
-	log.Printf("lookupIPv4 %v", ipv4ips)
-	return ipv4ips, nil
+	log.Printf("lookupIPv4 %v", addresses)
+	return addresses, nil
 }
 
 // logQuery logs the successful DNS lookup query and its result to the database
-func logQuery(domain string, ipv4ips []string) error {
+func logQuery(domain string, ips []string, clientip string) (models.Query, error) {
 
-	dnsLog := models.DNSLog{
-		Domain:  domain,
-		IPv4IPs: ipv4ips,
+	// Create a model.Query object
+	query := models.Query{
+		Addresses: ips,
+		ClientIP:  clientip,
+		Domain:    domain,
 	}
 
+	log.Printf("%v", query)
 	// Insert query and result into the database
-	err := conn.Create(&dnsLog).Error
+	err := conn.Create(&query).Error
 	if err != nil {
-		log.Printf("Error inserting DNSLog %v", err)
-		return err
+		log.Printf("Error inserting Query %v", err)
+		return models.Query{}, err
 	}
 
-	return nil
+	return query, nil
 }

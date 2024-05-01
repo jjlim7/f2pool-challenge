@@ -37,7 +37,7 @@ func ConnectDatabase() (*gorm.DB, error) {
 	}
 
 	// DB Migration
-	err = database.AutoMigrate(&models.AppInfo{}, &models.DNSLog{})
+	err = database.AutoMigrate(&models.Address{}, &models.Query{})
 	if err != nil {
 		log.Fatalln("Failed to auto-migrate models")
 	}
